@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { get_checklist_handler } from "../Controllers/get-checklist";
+import { getChecklistHandler } from "../Controllers/get-checklist";
+import { updateChecklistHandler } from "../Controllers/update-checklist";
 
 const router = Router();
 
-router.get("/", get_checklist_handler);
+router.get("/", getChecklistHandler);
+router.put("/:id", updateChecklistHandler);
 
 export default router;
