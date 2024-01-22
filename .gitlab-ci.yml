@@ -1,0 +1,74 @@
+variables:
+    DOCKER_REPO: 192.168.1.120:8083/aradis-gma_1_2-backend
+    NODE: node
+    DIND: docker:24.0.7-dind
+    DOCKER_CONTAINER: aradis-gma_1_2-backend
+    SSH: kroniak/ssh-client
+    FEAT: "-feature"
+    HOT: "-hotfix"
+    DEV: "development"
+    REL: "release"
+    REQ: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+stages:
+    - lint
+    - test
+    - build
+    - deploy
+
+unit-test:
+    stage: test
+    image: $NODE
+    before_script:
+        - corepack enable
+        - pnpm config set store-dir .pnpm-store
+        - pnpm install
+    script:
+        - pnpm run test:unit
+    rules:
+        - if: "$FEAT =~ $CI_COMMIT_REF_NAME"
+          allow_failure: true
+        - if: '$HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $DEV || $CI_COMMIT_REF_NAME == "master"))'
+          allow_failure: false
+    cache:
+        key:
+            files:
+                - pnpm-lock.yaml
+        paths:
+            - .pnpm-store
+
+integration-test:
+    stage: test
+    image: $NODE
+    before_script:
+        - corepack enable
+        - pnpm config set store-dir .pnpm-store
+        - pnpm install
+    script:
+        - pnpm run test:integration
+    rules:
+        - if: '$CI_COMMIT_REF_NAME == $DEV || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
+    cache:
+        key:
+            files:
+                - pnpm-lock.yaml
+        paths:
+            - .pnpm-store
+
+lint:
+    stage: lint
+    image: $NODE
+    before_script:
+        - corepack enable
+        - pnpm config set store-dir .pnpm-store
+        - pnpm install
+    script:
+        - pnpm run lint
+    rules:
+        - if: '$FEAT =~ $CI_COMMIT_REF_NAME || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $DEV || $CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
+    cache:
+        key:
+            files:
+                - pnpm-lock.yaml
+        paths:
+            - .pnpm-store
