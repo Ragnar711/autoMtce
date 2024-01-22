@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 interface ChecklistDoc extends mongoose.Document {
     organe: string;
     operations: Array<string>;
+    deleted?: boolean;
 }
 
 interface ChecklistAttr {
     organe: string;
     operations: Array<string>;
+    deleted?: boolean;
 }
 
 interface ChecklistModel extends mongoose.Model<ChecklistDoc> {
@@ -24,6 +26,10 @@ const checklistSchema = new mongoose.Schema({
     operations: {
         type: Array<string>,
         required: true,
+    },
+    deleted: {
+        type: Boolean,
+        default: false,
     },
 });
 

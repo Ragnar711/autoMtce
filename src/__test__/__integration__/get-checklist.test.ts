@@ -14,5 +14,7 @@ describe("GET /checklist", () => {
         expect(document).toHaveProperty("organe");
         expect(document).toHaveProperty("operations");
         expect(document.operations).toBeInstanceOf(Array);
+        expect(document).toHaveProperty("deleted");
+        expect(document.deleted).toBe(false);
     });
 });
