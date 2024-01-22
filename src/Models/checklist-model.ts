@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 interface ChecklistDoc extends mongoose.Document {
     organe: string;
-    operations: [{ operation: string; type: string }];
+    operations: Array<{ operation: string; type: string }>;
 }
 
 interface ChecklistAttr {
     organe: string;
-    operations: [{ operation: string; type: string }];
+    operations: Array<{ operation: string; type: string }>;
 }
 
 interface ChecklistModel extends mongoose.Model<ChecklistDoc> {
@@ -22,7 +22,7 @@ const checklistSchema = new mongoose.Schema({
         unique: true,
     },
     operations: {
-        type: [{ operation: String, type: String }],
+        type: Array<{ operation: string; type: string }>,
         required: true,
     },
 });
