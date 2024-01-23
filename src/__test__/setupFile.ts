@@ -9,18 +9,21 @@ beforeAll(async () => {
     const checklist1 = Checklist.build({
         organe: "Organe 1",
         operations: ["Operation 1", "Operation 2"],
+        deleted: false
     });
     await checklist1.save();
 
     const checklist2 = Checklist.build({
         organe: "Organe 2",
         operations: ["Operation 1", "Operation 2"],
+        deleted: false
     });
     await checklist2.save();
 
     const checklist3 = Checklist.build({
         organe: "Organe 3",
         operations: ["Operation 1", "Operation 2"],
+        deleted: false
     });
     await checklist3.save();
 });

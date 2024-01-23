@@ -12,10 +12,11 @@ describe("PUT /checklist/:id", () => {
 
     it("should update a document", async () => {
         const res = await request(app).get("/checklist");
-        const id = res.body[0]._id;
+
+        const documentId = res.body[0]._id;
 
         const response = await request(app)
-            .put(`/checklist/${id}`)
+            .put(`/checklist/${documentId}`)
             .send(validUpdatePayload)
             .expect(200);
 
