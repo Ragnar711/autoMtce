@@ -1,31 +1,56 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface ChecklistDoc extends mongoose.Document {
-    organe: string;
-    operations: Array<string>;
+interface Operation {
+    name: string;
+    frequency: "E" | "J" | "H" | "2S";
+    level: 1 | 2;
+    type: "nettoyage" | "inspection";
     deleted?: boolean;
 }
 
-interface ChecklistAttr {
-    organe: string;
-    operations: Array<string>;
+interface Element {
+    name: string;
+    operations: Operation[];
     deleted?: boolean;
 }
 
-interface ChecklistModel extends mongoose.Model<ChecklistDoc> {
-    // eslint-disable-next-line no-unused-vars
-    build(attr: ChecklistAttr): ChecklistDoc;
+interface Ensemble {
+    name: string;
+    elements: Element[];
+    deleted?: boolean;
 }
 
-const checklistSchema = new mongoose.Schema({
-    organe: {
+interface System {
+    name: string;
+    ensembles: Ensemble[];
+    deleted?: boolean;
+}
+
+interface OperationDocument extends Operation, Document {}
+interface ElementDocument extends Element, Document {}
+interface EnsembleDocument extends Ensemble, Document {}
+interface SystemDocument extends System, Document {}
+
+const OperationSchema: Schema<OperationDocument> = new Schema({
+    name: {
         type: String,
         required: true,
         unique: true,
     },
-    operations: {
-        type: Array<string>,
+    frequency: {
+        type: String,
         required: true,
+        enum: ["E", "J", "H", "2S"],
+    },
+    level: {
+        type: Number,
+        required: true,
+        enum: [1, 2],
+    },
+    type: {
+        type: String,
+        required: true,
+        enum: ["nettoyage", "inspection"],
     },
     deleted: {
         type: Boolean,
@@ -33,13 +58,48 @@ const checklistSchema = new mongoose.Schema({
     },
 });
 
-checklistSchema.statics.build = (attrs: ChecklistAttr) => {
-    return new Checklist(attrs);
-};
+const ElementSchema: Schema<ElementDocument> = new Schema({
+    name: {
+        type: String,
+        default: "",
+    },
+    operations: [OperationSchema],
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
+});
 
-const Checklist = mongoose.model<ChecklistDoc, ChecklistModel>(
-    "Checklist",
-    checklistSchema,
+const EnsembleSchema: Schema<EnsembleDocument> = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    elements: {
+        type: [ElementSchema],
+        default: [],
+    },
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+const SystemSchema: Schema<SystemDocument> = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    ensembles: [EnsembleSchema],
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+export const SystemModel: Model<SystemDocument> = mongoose.model(
+    "System",
+    SystemSchema,
 );
-
-export default Checklist;
