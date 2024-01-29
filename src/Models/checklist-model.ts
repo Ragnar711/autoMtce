@@ -35,7 +35,6 @@ const OperationSchema: Schema<OperationDocument> = new Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
     frequency: {
         type: String,
@@ -74,7 +73,6 @@ const EnsembleSchema: Schema<EnsembleDocument> = new Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
     elements: {
         type: [ElementSchema],
@@ -90,7 +88,6 @@ const SystemSchema: Schema<SystemDocument> = new Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
     ensembles: [EnsembleSchema],
     deleted: {
