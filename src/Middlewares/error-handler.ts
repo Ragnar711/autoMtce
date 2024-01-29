@@ -9,7 +9,7 @@ export const errorHandler = (
     next: NextFunction,
 ) => {
     // eslint-disable-next-line
-    console.error(error);
+    console.error(error.stack);
     if (error instanceof CustomError) {
         return res
             .status(error.statusCode)
