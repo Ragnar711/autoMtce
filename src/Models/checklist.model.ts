@@ -6,6 +6,7 @@ interface Operation {
     level: 1 | 2;
     type: "nettoyage" | "inspection";
     deleted?: boolean;
+    dueDate: Date;
 }
 
 interface Element {
@@ -26,10 +27,24 @@ interface System {
     deleted?: boolean;
 }
 
+interface Params {
+    name: string;
+    min: number;
+    max: number;
+    deleted?: boolean;
+}
+
+interface Checklist {
+    systems: System[];
+    params: Params[];
+}
+
 interface OperationDocument extends Operation, Document {}
 interface ElementDocument extends Element, Document {}
 interface EnsembleDocument extends Ensemble, Document {}
 interface SystemDocument extends System, Document {}
+interface ParamsDocument extends Params, Document {}
+interface ChecklistDocument extends Checklist, Document {}
 
 const OperationSchema: Schema<OperationDocument> = new Schema({
     name: {
@@ -54,6 +69,10 @@ const OperationSchema: Schema<OperationDocument> = new Schema({
     deleted: {
         type: Boolean,
         default: false,
+    },
+    dueDate: {
+        type: Date,
+        required: true,
     },
 });
 
@@ -96,7 +115,31 @@ const SystemSchema: Schema<SystemDocument> = new Schema({
     },
 });
 
-export const SystemModel: Model<SystemDocument> = mongoose.model(
-    "System",
-    SystemSchema,
+const paramsSchema: Schema<ParamsDocument> = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    min: {
+        type: Number,
+        required: true,
+    },
+    max: {
+        type: Number,
+        required: true,
+    },
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+const checklistSchema: Schema<ChecklistDocument> = new Schema({
+    systems: [SystemSchema],
+    params: [paramsSchema],
+});
+
+export const ChecklistModel: Model<ChecklistDocument> = mongoose.model(
+    "Checklist",
+    checklistSchema,
 );

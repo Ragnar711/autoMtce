@@ -9,7 +9,7 @@ import router from "./Routes/checklist-routes";
 export const start = () => {
     const app: Application = express();
 
-    mongoose.connect("mongodb://172.19.0.2:27017/autoMtce");
+    mongoose.connect(process.env.MONGO_URI!);
 
     // Middleware: Enable CORS, secure headers, and parse JSON
     app.use(cors({ origin: "*" }));
