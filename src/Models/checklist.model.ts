@@ -6,7 +6,7 @@ interface Operation {
     level: 1 | 2;
     type: "nettoyage" | "inspection";
     deleted?: boolean;
-    dueDate: Date;
+    dueDate?: Date;
 }
 
 interface Element {
@@ -37,6 +37,7 @@ interface Params {
 interface Checklist {
     systems: System[];
     params: Params[];
+    updatedAt: Date;
 }
 
 interface OperationDocument extends Operation, Document {}
@@ -72,7 +73,6 @@ const OperationSchema: Schema<OperationDocument> = new Schema({
     },
     dueDate: {
         type: Date,
-        required: true,
     },
 });
 
@@ -137,6 +137,10 @@ const paramsSchema: Schema<ParamsDocument> = new Schema({
 const checklistSchema: Schema<ChecklistDocument> = new Schema({
     systems: [SystemSchema],
     params: [paramsSchema],
+    updatedAt: {
+        type: Date,
+        default: new Date(),
+    },
 });
 
 export const ChecklistModel: Model<ChecklistDocument> = mongoose.model(
