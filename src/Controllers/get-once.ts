@@ -16,11 +16,10 @@ export const getChecklist = async (
             { sort: { updatedAt: -1 } },
         );
 
-        const checklistQueryOptions = { sort: { updatedAt: -1 } };
         const checklist = await ChecklistModel.findOne(
+            { deleted: false },
             {},
-            {},
-            checklistQueryOptions,
+            { sort: { updatedAt: -1 } },
         );
 
         if (checklist) {
