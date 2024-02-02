@@ -37,7 +37,6 @@ interface Params {
 interface Checklist {
     systems: System[];
     params: Params[];
-    updatedAt: Date;
 }
 
 interface OperationDocument extends Operation, Document {}
@@ -137,10 +136,6 @@ const paramsSchema: Schema<ParamsDocument> = new Schema({
 const checklistSchema: Schema<ChecklistDocument> = new Schema({
     systems: [SystemSchema],
     params: [paramsSchema],
-    updatedAt: {
-        type: Date,
-        default: new Date(),
-    },
 });
 
 export const ChecklistModel: Model<ChecklistDocument> = mongoose.model(
