@@ -16,11 +16,19 @@ export const getChecklist = async (
             { sort: { updatedAt: -1 } },
         );
 
-        const checklist = await ChecklistModel.findOne(
-            { deleted: false },
-            {},
-            { sort: { updatedAt: -1 } },
-        );
+        const checklist = await ChecklistModel.find({});
+
+        for (const system of checklist[0].systems) {
+            for (const ensemble of system.ensembles) {
+                for (const element of ensemble.elements) {
+                    for (const operation of element.operations) {
+                        if (!operation.status) {
+                            console.log(operation);
+                        }
+                    }
+                }
+            }
+        }
 
         if (checklist) {
             if (
@@ -39,6 +47,3 @@ export const getChecklist = async (
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
-// Implement the frequency filtering logic
-// Update the due date in the checklist collection after each call

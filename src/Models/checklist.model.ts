@@ -7,6 +7,7 @@ interface Operation {
     type: "nettoyage" | "inspection";
     deleted?: boolean;
     dueDate?: Date;
+    status: boolean;
 }
 
 interface Element {
@@ -34,7 +35,7 @@ interface Params {
     deleted?: boolean;
 }
 
-interface Checklist {
+export interface Checklist {
     systems: System[];
     params: Params[];
 }
@@ -72,6 +73,10 @@ const OperationSchema: Schema<OperationDocument> = new Schema({
     },
     dueDate: {
         type: Date,
+    },
+    status: {
+        type: Boolean,
+        default: false,
     },
 });
 

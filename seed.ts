@@ -310,7 +310,7 @@ const seedData = [
                         deleted: false,
                     },
                 ],
-                deleted: false,
+                deleted: true,
             },
             {
                 name: "NPS",
