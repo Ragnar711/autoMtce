@@ -11,8 +11,6 @@ mongoose.set("strictQuery", true);
 
 const MONGO_URI = process.env.MONGO_URI;
 
-console.log(process.env.MONGO_URI);
-
 mongoose.connect(MONGO_URI!);
 
 const seedData = [
