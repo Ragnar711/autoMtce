@@ -16,18 +16,12 @@ export const getChecklist = async (
             { sort: { updatedAt: -1 } },
         );
 
-        const checklist = await ChecklistModel.find({});
+        const checklist: any = await ChecklistModel.find({});
 
-        for (const system of checklist[0].systems) {
-            for (const ensemble of system.ensembles) {
-                for (const element of ensemble.elements) {
-                    for (const operation of element.operations) {
-                        if (!operation.status) {
-                            console.log(operation);
-                        }
-                    }
-                }
-            }
+        let out: any[] = [];
+        for (let i = 0; i < checklist.length; i++) {
+            out.push({ ...checklist[i]._doc, systems: [] });
+            filterChecklist(out.at(-1).systems, checklist[i].systems);
         }
 
         if (checklist) {
@@ -37,7 +31,7 @@ export const getChecklist = async (
             ) {
                 res.status(200).json(updatedChecklist);
             } else {
-                res.status(200).json(checklist);
+                res.status(200).json(out);
             }
         } else {
             res.status(404).json({ error: "No checklist found" });
@@ -47,3 +41,21 @@ export const getChecklist = async (
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+function filterChecklist(out: any[], array: any[], index: number = 0) {
+    const keys = ["ensembles", "elements", "operations"];
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].deleted) continue;
+        out.push({ ...array[i]._doc });
+        delete out.at(-1).deleted;
+        if (keys[index]) {
+            out.at(-1)[keys[index]] = [];
+
+            filterChecklist(
+                out.at(-1)[keys[index]],
+                array[i][keys[index]],
+                index + 1,
+            );
+        }
+    }
+}
