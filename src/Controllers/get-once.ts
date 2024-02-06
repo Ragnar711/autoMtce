@@ -9,29 +9,23 @@ export const getChecklist = async (
 ): Promise<void> => {
     try {
         const currentPoste = new Poste();
-
         const updatedChecklist = await UpdatedChecklistModel.findOne(
             {},
             {},
             { sort: { updatedAt: -1 } },
         );
+        const checklist = await ChecklistModel.find({});
 
-        const checklist: any = await ChecklistModel.find({});
+        const processedChecklist = processChecklist(checklist);
 
-        let out: any[] = [];
-        for (let i = 0; i < checklist.length; i++) {
-            out.push({ ...checklist[i]._doc, systems: [] });
-            filterChecklist(out.at(-1).systems, checklist[i].systems);
-        }
-
-        if (checklist) {
+        if (checklist.length > 0) {
             if (
                 updatedChecklist &&
                 currentPoste.isInTimeRange(updatedChecklist.updatedAt)
             ) {
                 res.status(200).json(updatedChecklist);
             } else {
-                res.status(200).json(out);
+                res.status(200).json(processedChecklist);
             }
         } else {
             res.status(404).json({ error: "No checklist found" });
@@ -42,20 +36,26 @@ export const getChecklist = async (
     }
 };
 
-function filterChecklist(out: any[], array: any[], index: number = 0) {
-    const keys = ["ensembles", "elements", "operations"];
-    for (let i = 0; i < array.length; i++) {
-        if (array[i].deleted) continue;
-        out.push({ ...array[i]._doc });
-        delete out.at(-1).deleted;
-        if (keys[index]) {
-            out.at(-1)[keys[index]] = [];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function processChecklist(checklist: any[]): any[] {
+    return checklist.map((item) => {
+        const processedItem = { ...item._doc, systems: [] };
+        filterChecklist(processedItem.systems, item.systems);
+        return processedItem;
+    });
+}
 
-            filterChecklist(
-                out.at(-1)[keys[index]],
-                array[i][keys[index]],
-                index + 1,
-            );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function filterChecklist(out: any[], array: any[], index = 0): void {
+    const keys = ["ensembles", "elements", "operations"];
+    for (const item of array) {
+        if (item.deleted || item.status) continue;
+        const newItem = { ...item._doc };
+        delete newItem.deleted;
+        if (keys[index]) {
+            newItem[keys[index]] = [];
+            filterChecklist(newItem[keys[index]], item[keys[index]], index + 1);
         }
+        out.push(newItem);
     }
 }

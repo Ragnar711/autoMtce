@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface Operation {
+export interface Operation {
     name: string;
     frequency: "E" | "J" | "H" | "2S";
     level: 1 | 2;
@@ -10,25 +10,25 @@ interface Operation {
     status: boolean;
 }
 
-interface Element {
+export interface Element {
     name: string;
     operations: Operation[];
     deleted?: boolean;
 }
 
-interface Ensemble {
+export interface Ensemble {
     name: string;
     elements: Element[];
     deleted?: boolean;
 }
 
-interface System {
+export interface System {
     name: string;
     ensembles: Ensemble[];
     deleted?: boolean;
 }
 
-interface Params {
+export interface Params {
     name: string;
     min: number;
     max: number;
