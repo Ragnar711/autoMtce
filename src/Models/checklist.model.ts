@@ -4,7 +4,7 @@ interface Operation {
     name: string;
     frequency: "E" | "J" | "H" | "2S";
     level: 1 | 2;
-    type: "nettoyage" | "inspection";
+    type: "nettoyage" | "inspection" | "réglage";
     deleted?: boolean;
     dueDate: Date;
     status?: boolean;
@@ -35,7 +35,7 @@ interface Params {
     deleted?: boolean;
 }
 
-interface Checklist {
+export interface Checklist {
     systems: Types.ObjectId[]; // References to System documents
     params: Types.ObjectId[]; // References to Params documents
 }
@@ -65,7 +65,7 @@ const OperationSchema: Schema<OperationDocument> = new Schema({
     type: {
         type: String,
         required: true,
-        enum: ["nettoyage", "inspection"],
+        enum: ["nettoyage", "inspection", "réglage"],
     },
     deleted: {
         type: Boolean,
