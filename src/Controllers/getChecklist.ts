@@ -7,7 +7,9 @@ export const getChecklist = async (
 ): Promise<void> => {
     try {
         const niveau: number = Number(req.params.niveau);
-        const checklist = await populateChecklist(niveau);
+        const type: string = req.params.type;
+
+        const checklist = await populateChecklist(niveau, type);
 
         if (checklist.length > 0) {
             res.status(200).json(checklist);

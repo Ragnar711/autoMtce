@@ -5,7 +5,7 @@ const app = start();
 
 describe("GET /checklist", () => {
     it("should return first level checklist", async () => {
-        const res = await request(app).get("/checklist/1");
+        const res = await request(app).get("/checklist/1/nettoyage");
 
         expect(res.status).toBe(200);
         expect(res.body[0]).toHaveProperty("systems");
@@ -20,10 +20,16 @@ describe("GET /checklist", () => {
         expect(
             res.body[0].systems[0].ensembles[0].elements[0].operations[0].level,
         ).toBe(1);
+        expect(
+            res.body[0].systems[0].ensembles[0].elements[0].operations[0],
+        ).toHaveProperty("type");
+        expect(
+            res.body[0].systems[0].ensembles[0].elements[0].operations[0].type,
+        ).toBe("nettoyage");
     });
 
     it("should return second level checklist", async () => {
-        const res = await request(app).get("/checklist/2");
+        const res = await request(app).get("/checklist/2/inspection");
 
         expect(res.status).toBe(200);
         expect(res.body[0]).toHaveProperty("systems");
@@ -38,5 +44,11 @@ describe("GET /checklist", () => {
         expect(
             res.body[0].systems[0].ensembles[0].elements[0].operations[0].level,
         ).toBe(2);
+        expect(
+            res.body[0].systems[0].ensembles[0].elements[0].operations[0],
+        ).toHaveProperty("type");
+        expect(
+            res.body[0].systems[0].ensembles[0].elements[0].operations[0].type,
+        ).toBe("inspection");
     });
 });
