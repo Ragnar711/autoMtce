@@ -13,14 +13,7 @@ export const updateStatus = async (
             return res.status(404).json({ message: "Operation not found" });
         }
 
-        const updatedOperation = await OperationModel.updateOne(
-            { _id: id },
-            { status: true },
-        );
-
-        if (updatedOperation.modifiedCount === 0) {
-            return res.status(304).send();
-        }
+        await OperationModel.updateOne({ _id: id }, { status: true });
 
         return res
             .status(200)
