@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getChecklist } from "../Controllers/getChecklist";
-import { updateStatus } from "../Controllers/update-status";
+import { updateStatus } from "../Controllers/updateStatus";
 
 const router = Router();
 
