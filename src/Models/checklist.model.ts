@@ -40,7 +40,7 @@ export interface Checklist {
     params: Types.ObjectId[]; // References to Params documents
 }
 
-interface OperationDocument extends Operation, Document {}
+export interface OperationDocument extends Operation, Document {}
 interface ElementDocument extends Element, Document {}
 interface EnsembleDocument extends Ensemble, Document {}
 interface SystemDocument extends System, Document {}

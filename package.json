@@ -37,7 +37,9 @@
         "express": "^4.18.2",
         "express-async-errors": "^3.1.1",
         "helmet": "^7.1.0",
-        "mongoose": "^8.1.0"
+        "mongodb": "^6.3.0",
+        "mongoose": "^8.1.0",
+        "node-cron": "^3.0.3"
     },
     "devDependencies": {
         "@types/cors": "^2.8.17",
