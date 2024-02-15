@@ -11,13 +11,13 @@ interface Operation {
 }
 
 interface Element {
-    name: string;
+    name?: string;
     operations: Types.ObjectId[]; // References to Operation documents
     deleted?: boolean;
 }
 
 interface Ensemble {
-    name: string;
+    name?: string;
     elements: Types.ObjectId[]; // References to Element documents
     deleted?: boolean;
 }
@@ -95,7 +95,7 @@ const ElementSchema: Schema<ElementDocument> = new Schema({
 const EnsembleSchema: Schema<EnsembleDocument> = new Schema({
     name: {
         type: String,
-        required: true,
+        default: "",
     },
     elements: [{ type: Schema.Types.ObjectId, ref: "Element" }], // Reference to Element documents
     deleted: {
