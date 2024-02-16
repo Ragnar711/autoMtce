@@ -3,11 +3,9 @@ import cron from "node-cron";
 import { MongoClient } from "mongodb";
 import moment from "moment";
 
-// Replace with your connection details
 const uri = "mongodb://root:example@localhost:27017/autoMtce?authSource=admin";
 const databaseName = "autoMtce";
 
-// Replace with collection names
 const checklistCollection = "checklists";
 const operationCollection = "operations";
 const archiveCollection = "archive";
@@ -80,50 +78,43 @@ const populateParams = async () => {
 
 const updateDueDatesIfNeeded = async () => {
     const db = await connectToDatabase();
-    const currentDate = new Date();
-    let updated = false;
+    const currentDate = moment();
 
-    while (!updated) {
-        const operationDocs = await db
-            .collection(operationCollection)
-            .find()
-            .toArray();
+    const operationDocs = await db
+        .collection(operationCollection)
+        .find()
+        .toArray();
 
-        for (const doc of operationDocs) {
-            const dueDate = doc.dueDate;
-            const frequency = doc.frequency;
-            let newDueDate;
+    for (const doc of operationDocs) {
+        let dueDate = moment(doc.dueDate);
+        const frequency = doc.frequency;
 
-            if (dueDate < currentDate) {
-                switch (frequency) {
-                    case "E":
-                        newDueDate = moment(dueDate).add(8, "h");
-                        break;
-                    case "J":
-                        newDueDate = moment(dueDate).add(1, "d");
-                        break;
-                    case "H":
-                        newDueDate = moment(dueDate).add(1, "w");
-                        break;
-                    case "2S":
-                        newDueDate = moment(dueDate).add(2, "w");
-                        break;
-                    default:
-                        console.error("Unhandled frequency:", frequency);
-                        break;
-                }
-            }
-
-            if (newDueDate && newDueDate > currentDate) {
-                await db
-                    .collection(operationCollection)
-                    .updateOne(
-                        { _id: doc._id },
-                        { $set: { dueDate: newDueDate._d } },
-                    );
-                updated = true;
+        while (dueDate.isBefore(currentDate)) {
+            switch (frequency) {
+                case "E":
+                    dueDate.add(8, "hours");
+                    break;
+                case "J":
+                    dueDate.add(1, "days");
+                    break;
+                case "H":
+                    dueDate.add(1, "weeks");
+                    break;
+                case "2S":
+                    dueDate.add(2, "weeks");
+                    break;
+                default:
+                    console.error("Unhandled frequency:", frequency);
+                    break;
             }
         }
+
+        await db
+            .collection(operationCollection)
+            .updateOne(
+                { _id: doc._id },
+                { $set: { dueDate: dueDate.toDate() } },
+            );
     }
 };
 
