@@ -12,7 +12,7 @@
         "test:integration": "jest ./src/__test__/__integration__ --watchAll=false --detectOpenHandles",
         "test:all:watch": "jest --watch",
         "test:unit:watch": "jest ./src/__test__/__unit__ --watch",
-        "test:integrated:watch": "jest ./src/__test__/__integrated__ --watch",
+        "test:integration:watch": "jest ./src/__test__/__integration__ --watch",
         "lint": "eslint ./src",
         "lint:fix": "eslint ./src --fix"
     },
