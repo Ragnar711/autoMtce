@@ -1,34 +1,34 @@
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
-export interface Operation {
+interface Operation {
     name: string;
     frequency: "E" | "J" | "H" | "2S";
     level: 1 | 2;
-    type: "nettoyage" | "inspection";
+    type: "nettoyage" | "inspection" | "réglage";
     deleted?: boolean;
-    dueDate?: Date;
-    status: boolean;
+    dueDate: Date;
+    status?: boolean;
 }
 
-export interface Element {
+interface Element {
+    name?: string;
+    operations: Types.ObjectId[]; // References to Operation documents
+    deleted?: boolean;
+}
+
+interface Ensemble {
+    name?: string;
+    elements: Types.ObjectId[]; // References to Element documents
+    deleted?: boolean;
+}
+
+interface System {
     name: string;
-    operations: Operation[];
+    ensembles: Types.ObjectId[]; // References to Ensemble documents
     deleted?: boolean;
 }
 
-export interface Ensemble {
-    name: string;
-    elements: Element[];
-    deleted?: boolean;
-}
-
-export interface System {
-    name: string;
-    ensembles: Ensemble[];
-    deleted?: boolean;
-}
-
-export interface Params {
+interface Params {
     name: string;
     min: number;
     max: number;
@@ -36,11 +36,11 @@ export interface Params {
 }
 
 export interface Checklist {
-    systems: System[];
-    params: Params[];
+    systems: Types.ObjectId[]; // References to System documents
+    params: Types.ObjectId[]; // References to Params documents
 }
 
-interface OperationDocument extends Operation, Document {}
+export interface OperationDocument extends Operation, Document {}
 interface ElementDocument extends Element, Document {}
 interface EnsembleDocument extends Ensemble, Document {}
 interface SystemDocument extends System, Document {}
@@ -65,7 +65,7 @@ const OperationSchema: Schema<OperationDocument> = new Schema({
     type: {
         type: String,
         required: true,
-        enum: ["nettoyage", "inspection"],
+        enum: ["nettoyage", "inspection", "réglage"],
     },
     deleted: {
         type: Boolean,
@@ -85,7 +85,7 @@ const ElementSchema: Schema<ElementDocument> = new Schema({
         type: String,
         default: "",
     },
-    operations: [OperationSchema],
+    operations: [{ type: Schema.Types.ObjectId, ref: "Operation" }], // Reference to Operation documents
     deleted: {
         type: Boolean,
         default: false,
@@ -95,12 +95,9 @@ const ElementSchema: Schema<ElementDocument> = new Schema({
 const EnsembleSchema: Schema<EnsembleDocument> = new Schema({
     name: {
         type: String,
-        required: true,
+        default: "",
     },
-    elements: {
-        type: [ElementSchema],
-        default: [],
-    },
+    elements: [{ type: Schema.Types.ObjectId, ref: "Element" }], // Reference to Element documents
     deleted: {
         type: Boolean,
         default: false,
@@ -112,7 +109,7 @@ const SystemSchema: Schema<SystemDocument> = new Schema({
         type: String,
         required: true,
     },
-    ensembles: [EnsembleSchema],
+    ensembles: [{ type: Schema.Types.ObjectId, ref: "Ensemble" }], // Reference to Ensemble documents
     deleted: {
         type: Boolean,
         default: false,
@@ -139,9 +136,34 @@ const paramsSchema: Schema<ParamsDocument> = new Schema({
 });
 
 const checklistSchema: Schema<ChecklistDocument> = new Schema({
-    systems: [SystemSchema],
-    params: [paramsSchema],
+    systems: [{ type: Schema.Types.ObjectId, ref: "System" }], // Reference to System documents
+    params: [{ type: Schema.Types.ObjectId, ref: "Params" }], // Reference to Params documents
 });
+
+export const OperationModel: Model<OperationDocument> = mongoose.model(
+    "Operation",
+    OperationSchema,
+);
+
+export const ElementModel: Model<ElementDocument> = mongoose.model(
+    "Element",
+    ElementSchema,
+);
+
+export const EnsembleModel: Model<EnsembleDocument> = mongoose.model(
+    "Ensemble",
+    EnsembleSchema,
+);
+
+export const SystemModel: Model<SystemDocument> = mongoose.model(
+    "System",
+    SystemSchema,
+);
+
+export const ParamsModel: Model<ParamsDocument> = mongoose.model(
+    "Params",
+    paramsSchema,
+);
 
 export const ChecklistModel: Model<ChecklistDocument> = mongoose.model(
     "Checklist",
