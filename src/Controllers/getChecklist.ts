@@ -12,7 +12,7 @@ export const getChecklist = async (
         const checklist = await populateChecklist(niveau, type);
 
         if (checklist.length > 0) {
-            res.status(200).json(checklist);
+            res.status(200).json(checklist[0]);
         } else {
             res.status(404).json({ error: "No checklist found" });
         }
