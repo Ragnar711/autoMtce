@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { ChecklistModel } from "../Models/checklist.model";
+import { ChecklistModel } from "../../Models/checklist.model";
+import { NotFoundError } from "../../Utils/errors";
 
 export const getParams = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -11,7 +12,7 @@ export const getParams = async (req: Request, res: Response): Promise<void> => {
         if (params.length > 0) {
             res.status(200).json(params[0]);
         } else {
-            res.status(404).json({ error: "No checklist found" });
+            throw new NotFoundError("Paramètres n'existe pas");
         }
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });

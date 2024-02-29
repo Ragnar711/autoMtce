@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ChecklistModel, ParamsModel } from "../Models/checklist.model";
-import { BadRequestError } from "../Utils/errors";
+import { ChecklistModel, ParamsModel } from "../../Models/checklist.model";
+import { BadRequestError } from "../../Utils/errors";
 
 export const addParam = async (req: Request, res: Response): Promise<void> => {
     const { name, min, max } = req.body;
@@ -15,5 +15,5 @@ export const addParam = async (req: Request, res: Response): Promise<void> => {
     checklist?.params.push(response._id);
     await checklist?.save();
 
-    res.status(201).json(response);
+    res.status(201);
 };
