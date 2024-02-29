@@ -5,16 +5,23 @@ export const errorHandler = (
     error: Error,
     req: Request,
     res: Response,
-    // eslint-disable-next-line
     next: NextFunction,
 ) => {
-    // eslint-disable-next-line
-    console.error(error.stack);
-    if (error instanceof CustomError) {
-        return res
-            .status(error.statusCode)
-            .json({ errors: error.toResponseObject() });
+    try {
+        console.error(error.stack);
+
+        if (error instanceof CustomError) {
+            return res
+                .status(error.statusCode)
+                .json({ errors: error.toResponseObject() });
+        }
+
+        return res.status(500).json({ errors: [{ message: error.message }] });
+    } catch (err) {
+        next(err);
     }
 
-    return res.status(500).json({ errors: [{ message: error }] });
+    return res
+        .status(500)
+        .json({ errors: [{ message: "Internal Server Error" }] });
 };

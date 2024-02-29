@@ -1,8 +1,10 @@
 variables:
     DOCKER_REPO: 192.168.1.120:8083/aradis-gma_1_2-backend
-    NODE: node
-    DIND: docker:24.0.7-dind
     DOCKER_CONTAINER: aradis-gma_1_2-backend
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    NODE: node:20
+    DIND: docker:25-dind
+    DOCKER: docker:25
     SSH: kroniak/ssh-client
     FEAT: "-feature"
     HOT: "-hotfix"
@@ -15,6 +17,24 @@ stages:
     - test
     - build
     - deploy
+
+lint:
+    stage: lint
+    image: $NODE
+    before_script:
+        - corepack enable
+        - pnpm config set store-dir .pnpm-store
+        - pnpm install
+    script:
+        - pnpm run lint
+    rules:
+        - if: '$FEAT =~ $CI_COMMIT_REF_NAME || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $DEV || $CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
+    cache:
+        key:
+            files:
+                - pnpm-lock.yaml
+        paths:
+            - .pnpm-store
 
 unit-test:
     stage: test
@@ -55,20 +75,38 @@ integration-test:
         paths:
             - .pnpm-store
 
-lint:
-    stage: lint
-    image: $NODE
-    before_script:
-        - corepack enable
-        - pnpm config set store-dir .pnpm-store
-        - pnpm install
+sast:
+    stage: test
+
+build:
+    stage: build
+    only:
+        - master
+    image: $DOCKER
+    services:
+        - $DIND
+    variables:
+        DOCKER_HOST: tcp://thedockerhost:2375/
+        DOCKER_DRIVER: overlay2
+        DOCKER_TLS_CERTDIR: ""
     script:
-        - pnpm run lint
-    rules:
-        - if: '$FEAT =~ $CI_COMMIT_REF_NAME || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $DEV || $CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
-    cache:
-        key:
-            files:
-                - pnpm-lock.yaml
-        paths:
-            - .pnpm-store
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker build -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
+
+deploy:
+    stage: deploy
+    only:
+        - master
+    image: $SSH
+    needs:
+        - build
+    before_script:
+        - chmod 400 $SSH_KEY
+    script:
+        - ssh -o StrictHostKeyChecking=no medhedi@192.168.1.120 -i $SSH_KEY "
+          docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+          docker run -d -p 4000:4000 $IMAGE_TAG"
+
+include:
+    - template: Jobs/SAST.gitlab-ci.yml

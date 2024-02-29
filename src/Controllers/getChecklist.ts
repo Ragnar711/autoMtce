@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { populateChecklist } from "../Utils/filter";
+import { NotFoundError } from "../Utils/errors";
 
 export const getChecklist = async (
     req: Request,
@@ -14,7 +15,7 @@ export const getChecklist = async (
         if (checklist.length > 0) {
             res.status(200).json(checklist[0]);
         } else {
-            res.status(404).json({ error: "No checklist found" });
+            throw new NotFoundError("Checklist n'existe pas");
         }
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });

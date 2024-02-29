@@ -124,10 +124,12 @@ const paramsSchema: Schema<ParamsDocument> = new Schema({
     min: {
         type: Number,
         required: true,
+        min: 0,
     },
     max: {
         type: Number,
         required: true,
+        min: 0,
     },
     deleted: {
         type: Boolean,
