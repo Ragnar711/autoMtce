@@ -15,5 +15,5 @@ export const addParam = async (req: Request, res: Response): Promise<void> => {
     checklist?.params.push(response._id);
     await checklist?.save();
 
-    res.status(201);
+    res.sendStatus(201);
 };

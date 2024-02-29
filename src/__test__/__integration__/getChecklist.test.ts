@@ -8,23 +8,23 @@ describe("GET /checklist", () => {
         const res = await request(app).get("/checklist/1/nettoyage");
 
         expect(res.status).toBe(200);
-        expect(res.body[0]).toHaveProperty("systems");
-        expect(res.body[0].systems[0]).toHaveProperty("ensembles");
-        expect(res.body[0].systems[0].ensembles[0]).toHaveProperty("elements");
-        expect(res.body[0].systems[0].ensembles[0].elements[0]).toHaveProperty(
+        expect(res.body).toHaveProperty("systems");
+        expect(res.body.systems[0]).toHaveProperty("ensembles");
+        expect(res.body.systems[0].ensembles[0]).toHaveProperty("elements");
+        expect(res.body.systems[0].ensembles[0].elements[0]).toHaveProperty(
             "operations",
         );
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0],
+            res.body.systems[0].ensembles[0].elements[0].operations[0],
         ).toHaveProperty("level");
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0].level,
+            res.body.systems[0].ensembles[0].elements[0].operations[0].level,
         ).toBe(1);
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0],
+            res.body.systems[0].ensembles[0].elements[0].operations[0],
         ).toHaveProperty("type");
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0].type,
+            res.body.systems[0].ensembles[0].elements[0].operations[0].type,
         ).toBe("nettoyage");
     });
 
@@ -32,23 +32,23 @@ describe("GET /checklist", () => {
         const res = await request(app).get("/checklist/2/inspection");
 
         expect(res.status).toBe(200);
-        expect(res.body[0]).toHaveProperty("systems");
-        expect(res.body[0].systems[0]).toHaveProperty("ensembles");
-        expect(res.body[0].systems[0].ensembles[0]).toHaveProperty("elements");
-        expect(res.body[0].systems[0].ensembles[0].elements[0]).toHaveProperty(
+        expect(res.body).toHaveProperty("systems");
+        expect(res.body.systems[0]).toHaveProperty("ensembles");
+        expect(res.body.systems[0].ensembles[0]).toHaveProperty("elements");
+        expect(res.body.systems[0].ensembles[0].elements[0]).toHaveProperty(
             "operations",
         );
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0],
+            res.body.systems[0].ensembles[0].elements[0].operations[0],
         ).toHaveProperty("level");
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0].level,
+            res.body.systems[0].ensembles[0].elements[0].operations[0].level,
         ).toBe(2);
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0],
+            res.body.systems[0].ensembles[0].elements[0].operations[0],
         ).toHaveProperty("type");
         expect(
-            res.body[0].systems[0].ensembles[0].elements[0].operations[0].type,
+            res.body.systems[0].ensembles[0].elements[0].operations[0].type,
         ).toBe("inspection");
     });
 });
