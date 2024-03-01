@@ -8,8 +8,6 @@ export const errorHandler = (
     next: NextFunction,
 ) => {
     try {
-        console.error(error.stack);
-
         if (error instanceof CustomError) {
             return res
                 .status(error.statusCode)

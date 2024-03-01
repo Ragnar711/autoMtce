@@ -27,7 +27,7 @@ beforeAll(async () => {
 
     const element1 = await ElementModel.create({
         name: "Element 1",
-        operations: [operation1._id, operation2._id],
+        operations: [operation1._id],
     });
 
     const element2 = await ElementModel.create({
@@ -37,7 +37,7 @@ beforeAll(async () => {
 
     const ensemble1 = await EnsembleModel.create({
         name: "Ensemble 1",
-        elements: [element1._id, element2._id],
+        elements: [element1._id],
     });
 
     const ensemble2 = await EnsembleModel.create({

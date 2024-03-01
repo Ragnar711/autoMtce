@@ -10,12 +10,12 @@ describe("Delete /params/:id", () => {
         const params = await ParamsModel.find();
         const param = params[0]._id;
 
-        await request(app).put(`/checklist/params/${param}`).expect(200);
+        await request(app).delete(`/checklist/params/${param}`).expect(200);
     });
 
     it("should return 404 if parameter is not found", async () => {
         const id = new mongoose.Types.ObjectId();
 
-        await request(app).put(`/checklist/params/${id}`).expect(404);
+        await request(app).delete(`/checklist/params/${id}`).expect(404);
     });
 });

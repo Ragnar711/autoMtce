@@ -9,10 +9,7 @@ import router from "./Routes/checklist-routes";
 export const start = () => {
     const app: Application = express();
 
-    mongoose
-        .connect(process.env.MONGO_URI!)
-        .then(() => console.log("Connected to MongoDB"))
-        .catch((err) => console.error("Error connecting to MongoDB:", err));
+    mongoose.connect(process.env.MONGO_URI!);
 
     // Middleware: Enable CORS, secure headers, and parse JSON
     app.use(cors({ origin: "*" }));

@@ -9,8 +9,6 @@ export const updateParam = async (
     const id = req.params.id;
     const { name, min, max } = req.body;
 
-    console.log(id);
-
     const updateObject: { [key: string]: string | number } = {};
 
     if (name) {

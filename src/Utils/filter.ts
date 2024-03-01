@@ -9,7 +9,9 @@ export async function populateChecklist(level: number, type: string) {
             match: { deleted: false },
             populate: {
                 path: "elements",
-                match: { deleted: false },
+                match: {
+                    deleted: false,
+                },
                 populate: {
                     path: "operations",
                     match: {
