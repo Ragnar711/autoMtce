@@ -36,7 +36,7 @@ lint:
         paths:
             - .pnpm-store
 
-unit-test:
+test:
     stage: test
     image: $NODE
     before_script:
@@ -44,28 +44,7 @@ unit-test:
         - pnpm config set store-dir .pnpm-store
         - pnpm install
     script:
-        - pnpm run test:unit
-    rules:
-        - if: "$FEAT =~ $CI_COMMIT_REF_NAME"
-          allow_failure: true
-        - if: '$HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $DEV || $CI_COMMIT_REF_NAME == "master"))'
-          allow_failure: false
-    cache:
-        key:
-            files:
-                - pnpm-lock.yaml
-        paths:
-            - .pnpm-store
-
-integration-test:
-    stage: test
-    image: $NODE
-    before_script:
-        - corepack enable
-        - pnpm config set store-dir .pnpm-store
-        - pnpm install
-    script:
-        - pnpm run test:integration
+        - pnpm run test
     rules:
         - if: '$CI_COMMIT_REF_NAME == $DEV || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
     cache:

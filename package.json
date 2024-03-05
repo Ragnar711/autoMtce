@@ -7,12 +7,7 @@
         "start": "node build/index.js",
         "dev": "nodemon src/index.ts",
         "build": "rm -rf build/* && tsc",
-        "test:all": "jest --watchAll=false",
-        "test:unit": "jest ./src/__test__/__unit__ --watchAll=false",
-        "test:integration": "jest ./src/__test__/__integration__ --watchAll=false --detectOpenHandles",
-        "test:all:watch": "jest --watch",
-        "test:unit:watch": "jest ./src/__test__/__unit__ --watch",
-        "test:integration:watch": "jest ./src/__test__/__integration__ --watch",
+        "test": "jest ./src/__test__/__integration__ --watchAll=false --detectOpenHandles",
         "lint": "eslint ./src",
         "lint:fix": "eslint ./src --fix"
     },

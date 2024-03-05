@@ -76,5 +76,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+    await SystemModel.deleteMany();
+    await EnsembleModel.deleteMany();
+    await ElementModel.deleteMany();
+    await OperationModel.deleteMany();
+    await ParamsModel.deleteMany();
+
     await mongoose.disconnect();
 });
