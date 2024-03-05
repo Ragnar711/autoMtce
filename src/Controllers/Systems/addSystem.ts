@@ -1,18 +1,26 @@
 import { Request, Response } from "express";
 import { ChecklistModel, SystemModel } from "../../Models/checklist.model";
-import { BadRequestError } from "../../Utils/errors";
+import { BadRequestError, NotFoundError } from "../../Utils/errors";
+
+interface ISystem {
+    name: string;
+    ensembles: [];
+}
 
 export const addSystem = async (req: Request, res: Response): Promise<void> => {
-    const { name } = req.body;
+    const data: ISystem = req.body;
 
-    const existingSystem = await SystemModel.findOne({ name });
+    const existingSystem = await SystemModel.findOne({ name: data.name });
 
     if (existingSystem) throw new BadRequestError("Système existe déjà");
 
-    const response = await SystemModel.create({ name, ensembles: [] });
+    const response = await SystemModel.create(data);
 
     const checklist = await ChecklistModel.findOne().sort({ _id: -1 });
-    checklist?.systems.push(response._id);
+
+    if (!checklist) throw new NotFoundError("Checklist n'existe pas");
+
+    checklist.params.push(response._id);
     await checklist?.save();
 
     res.sendStatus(201);

@@ -10,7 +10,8 @@ export const deleteParam = async (
 
     const param = await ParamsModel.findById(id);
 
-    if (!param) throw new NotFoundError("Paramètre n'existe pas");
+    if (!param || param.deleted)
+        throw new NotFoundError("Paramètre n'existe pas");
 
     await ParamsModel.updateOne({ _id: id }, { deleted: true });
 

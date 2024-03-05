@@ -23,7 +23,7 @@ export const updateParam = async (
 
     const updatedParam = await ParamsModel.findByIdAndUpdate(id, updateObject);
 
-    if (!updatedParam) {
+    if (!updatedParam || updatedParam.deleted) {
         throw new NotFoundError("Paramètre n'existe pas");
     } else {
         res.sendStatus(200);

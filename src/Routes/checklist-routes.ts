@@ -9,6 +9,9 @@ import { deleteParam } from "../Controllers/Params/deleteParam";
 import { addSystem } from "../Controllers/Systems/addSystem";
 import { deleteSystem } from "../Controllers/Systems/deleteSystem";
 import { updateSystem } from "../Controllers/Systems/updateSystem";
+import { addEnsemble } from "../Controllers/Ensembles/addEnsemble";
+import { deleteEnsemble } from "../Controllers/Ensembles/deleteEnsemble";
+import { updateEnsemble } from "../Controllers/Ensembles/updateEnsemble";
 
 const router = Router();
 
@@ -22,6 +25,10 @@ router.delete("/params/:id", asyncHandler(deleteParam));
 router.post("/system", asyncHandler(addSystem));
 router.delete("/system/:id", asyncHandler(deleteSystem));
 router.put("/system/:id", asyncHandler(updateSystem));
+
+router.post("/ensemble/:id", asyncHandler(addEnsemble));
+router.delete("/ensemble/:id", asyncHandler(deleteEnsemble));
+router.put("/ensemble/:id", asyncHandler(updateEnsemble));
 
 router.put("/:id", asyncHandler(updateStatus));
 

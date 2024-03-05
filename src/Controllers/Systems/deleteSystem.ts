@@ -15,7 +15,8 @@ export const deleteSystem = async (
 
     const system = await SystemModel.findById(id);
 
-    if (!system) throw new NotFoundError("Système n'existe pas");
+    if (!system || system.deleted)
+        throw new NotFoundError("Système n'existe pas");
 
     const ensembles = await EnsembleModel.find({
         _id: { $in: system.ensembles },

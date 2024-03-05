@@ -11,9 +11,8 @@ export const updateSystem = async (
 
     const updatedSystem = await SystemModel.findByIdAndUpdate(id, { name });
 
-    if (!updatedSystem) {
+    if (!updatedSystem || updatedSystem.deleted)
         throw new NotFoundError("Système n'existe pas");
-    } else {
-        res.sendStatus(200);
-    }
+
+    res.sendStatus(200);
 };
