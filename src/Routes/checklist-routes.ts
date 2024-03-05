@@ -12,6 +12,8 @@ import { updateSystem } from "../Controllers/Systems/updateSystem";
 import { addEnsemble } from "../Controllers/Ensembles/addEnsemble";
 import { deleteEnsemble } from "../Controllers/Ensembles/deleteEnsemble";
 import { updateEnsemble } from "../Controllers/Ensembles/updateEnsemble";
+import { addElement } from "../Controllers/Elements/addElement";
+import { deleteElement } from "../Controllers/Elements/deleteElement";
 
 const router = Router();
 
@@ -29,6 +31,9 @@ router.put("/system/:id", asyncHandler(updateSystem));
 router.post("/ensemble/:id", asyncHandler(addEnsemble));
 router.delete("/ensemble/:id", asyncHandler(deleteEnsemble));
 router.put("/ensemble/:id", asyncHandler(updateEnsemble));
+
+router.post("/element/:id", asyncHandler(addElement));
+router.delete("/element/:id", asyncHandler(deleteElement));
 
 router.put("/:id", asyncHandler(updateStatus));
 
