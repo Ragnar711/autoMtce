@@ -34,7 +34,6 @@ test:
 
 sast:
     stage: test
-    extends: .sast_template
 
 build:
     stage: build
