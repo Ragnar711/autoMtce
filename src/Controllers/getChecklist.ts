@@ -6,7 +6,7 @@ export const getChecklist = async (
     req: Request,
     res: Response,
 ): Promise<void> => {
-    const niveau: number = Number(req.params.niveau);
+    const niveau = Number(req.params.niveau);
     const type: string = req.params.type;
 
     const checklist = await populateChecklist(niveau, type);
