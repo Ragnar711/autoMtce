@@ -1,12 +1,34 @@
 version: "3.8"
 
 services:
-    mongo:
-        image: mongo
+    app:
+        image: ${DC_IMGAE_NAME}:${DC_IMAGE_TAG}
+        environment:
+            PORT: 4000
+            MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo_db:27017/autoMtce?authSource=admin
+        ports:
+            - 4000:4000
+        depends_on:
+            - mongo_db
+        networks:
+            - autoMtce
+
+    mongo_db:
+        image: mongo:5
         restart: always
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: example
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
             MONGO_INITDB_DATABASE: autoMtce
-        ports:
-            - "127.0.0.1:27017:27017"
+        volumes:
+            - mongo_data:/data/db
+        networks:
+            - autoMtce
+
+networks:
+    autoMtce:
+        external:
+            name: autoMtce
+
+volumes:
+    mongo_data: {}

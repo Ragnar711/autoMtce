@@ -1,16 +1,5 @@
 variables:
-    DOCKER_REPO: 192.168.1.120:8083/aradis-gma_1_2-backend
-    DOCKER_CONTAINER: aradis-gma_1_2-backend
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    NODE: node:20
-    DIND: docker:25-dind
-    DOCKER: docker:25
-    SSH: kroniak/ssh-client
-    FEAT: "-feature"
-    HOT: "-hotfix"
-    DEV: "development"
-    REL: "release"
-    REQ: $CI_PIPELINE_SOURCE == "merge_request_event"
+    IMAGE_NAME: $CI_REGISTRY_IMAGE
 
 stages:
     - lint
@@ -18,17 +7,12 @@ stages:
     - build
     - deploy
 
-lint:
-    stage: lint
+.node_template: &node_template
     image: $NODE
     before_script:
         - corepack enable
         - pnpm config set store-dir .pnpm-store
         - pnpm install
-    script:
-        - pnpm run lint
-    rules:
-        - if: '$FEAT =~ $CI_COMMIT_REF_NAME || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $DEV || $CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
     cache:
         key:
             files:
@@ -36,56 +20,71 @@ lint:
         paths:
             - .pnpm-store
 
+lint:
+    <<: *node_template
+    stage: lint
+    script:
+        - pnpm run lint
+
 test:
+    <<: *node_template
     stage: test
-    image: $NODE
-    before_script:
-        - corepack enable
-        - pnpm config set store-dir .pnpm-store
-        - pnpm install
     script:
         - pnpm run test
-    rules:
-        - if: '$CI_COMMIT_REF_NAME == $DEV || $HOT =~ $CI_COMMIT_REF_NAME || ($REQ && ($CI_COMMIT_REF_NAME == $REL || $CI_COMMIT_REF_NAME == "master"))'
-    cache:
-        key:
-            files:
-                - pnpm-lock.yaml
-        paths:
-            - .pnpm-store
 
 sast:
     stage: test
+    extends: .sast_template
 
 build:
     stage: build
-    only:
-        - master
     image: $DOCKER
     services:
-        - $DIND
+        - docker:25-dind
     variables:
         DOCKER_HOST: tcp://thedockerhost:2375/
         DOCKER_DRIVER: overlay2
         DOCKER_TLS_CERTDIR: ""
+    before_script:
+        - export IMAGE_VERSION=$(cat app/package.json | jq -r .version)
+        - export IMAGE_TAG=$IMAGE_VERSION.$CI_PIPELINE_IID
+        - echo "IMAGE_TAG:$IMAGE_TAG" > build.env
     script:
         - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-        - docker build -t $IMAGE_TAG .
-        - docker push $IMAGE_TAG
+        - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+        - docker push $IMAGE_NAME:$IMAGE_TAG
+    artifacts:
+        reports:
+            dotenv: build.env
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "development" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release-.*/)'
 
 deploy:
     stage: deploy
-    only:
-        - master
-    image: $SSH
+    image: kroniak/ssh-client
     needs:
         - build
+    variables:
+        SSH_OPTIONS: "-o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY"
+        REMOTE_DIR: "/home/$SSH_USER"
+        DOCKER_COMPOSE_CMD: "docker-compose -f $REMOTE_DIR/docker-compose.yml"
     before_script:
-        - chmod 400 $SSH_KEY
+        - chmod 400 $SSH_PRIVATE_KEY
     script:
-        - ssh -o StrictHostKeyChecking=no medhedi@192.168.1.120 -i $SSH_KEY "
-          docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
-          docker run -d -p 4000:4000 $IMAGE_TAG"
+        - scp $SSH_OPTIONS ./docker-compose.yml $SSH_USER@$IPADDRESS:$REMOTE_DIR
+        - >
+            ssh $SSH_OPTIONS $SSH_USER@$IPADDRESS "
+            docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+            export COMPOSE_PROJECT_NAME=autoMtce &&
+            export DC_IMAGE_NAME=$IMAGE_NAME &&
+            export DC_IMAGE_TAG=$IMAGE_TAG &&
+            export MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME &&
+            export MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD &&
+            docker network create autoMtce || true &&
+            $DOCKER_COMPOSE_CMD down &&
+            $DOCKER_COMPOSE_CMD up -d"
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "development"'
 
 include:
     - template: Jobs/SAST.gitlab-ci.yml

@@ -1,6 +1,6 @@
 {
     "name": "gma_1_2_backend",
-    "version": "0.0.1",
+    "version": "1.0",
     "description": "Backend application for 'Gestion de la maintenance autonome 1er et 2eme niveau' of ARADIS",
     "main": "src/index.ts",
     "scripts": {
