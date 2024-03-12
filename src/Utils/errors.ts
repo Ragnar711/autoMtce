@@ -13,6 +13,7 @@ export class NotAuthorizedError extends CustomError {
     constructor() {
         super("Not authorized");
         Object.setPrototypeOf(this, NotAuthorizedError.prototype);
+        this.toResponseObject = this.toResponseObject.bind(this);
     }
     toResponseObject(): { message: string }[] {
         return [{ message: "Non autorisé" }];
@@ -24,6 +25,7 @@ export class ForbiddenError extends CustomError {
     constructor() {
         super("Forbidden");
         Object.setPrototypeOf(this, ForbiddenError.prototype);
+        this.toResponseObject = this.toResponseObject.bind(this);
     }
     toResponseObject(): { message: string }[] {
         return [{ message: "Vous n'avez pas le droit d'accèes" }];
