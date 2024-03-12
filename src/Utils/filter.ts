@@ -1,6 +1,6 @@
 import { ChecklistModel } from "../Models/checklist.model";
 
-export async function populateChecklist(level: number, type: string) {
+export const populateChecklist = (level: number, type: string) => {
     return ChecklistModel.find({}).populate({
         path: "systems",
         match: { deleted: false },
@@ -24,4 +24,4 @@ export async function populateChecklist(level: number, type: string) {
             },
         },
     });
-}
+};
