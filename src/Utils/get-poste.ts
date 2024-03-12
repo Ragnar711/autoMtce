@@ -10,17 +10,13 @@ export class Poste {
 
     isInTimeRange(checkDate: Date): boolean {
         const checkHour = checkDate.getHours();
-
-        if (
+        const isWithinRange =
             (this.startTime <= this.endTime &&
                 checkHour >= this.startTime &&
                 checkHour < this.endTime) ||
             (this.startTime > this.endTime &&
-                (checkHour >= this.startTime || checkHour < this.endTime))
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+                (checkHour >= this.startTime || checkHour < this.endTime));
+
+        return isWithinRange;
     }
 }
