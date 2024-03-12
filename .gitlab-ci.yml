@@ -83,7 +83,7 @@ deploy:
             $DOCKER_COMPOSE_CMD down &&
             $DOCKER_COMPOSE_CMD up -d"
     rules:
-        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "development"'
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "development"'
 
 include:
     - template: Jobs/SAST.gitlab-ci.yml
