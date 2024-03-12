@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {  OperationModel } from "../../Models/checklist.model";
+import { OperationModel } from "../../Models/checklist.model";
 import { NotFoundError } from "../../Utils/errors";
 
 export const deleteOperation = async (

@@ -17,7 +17,7 @@ export const updateOperation = async (
     const id = req.params.id;
     const data: IOperation = req.body;
 
-    const updatedOperation = await OperationModel.findByIdAndUpdate(id,  data );
+    const updatedOperation = await OperationModel.findByIdAndUpdate(id, data);
 
     if (!updatedOperation || updatedOperation.deleted)
         throw new NotFoundError("Opération n'existe pas");
