@@ -8,17 +8,10 @@ stages:
     - deploy
 
 .node_template: &node_template
-    image: $NODE
+    image: node:18-bullseye
     before_script:
-        - corepack enable
-        - pnpm config set store-dir .pnpm-store
+        - npm i -g pnpm
         - pnpm install
-    cache:
-        key:
-            files:
-                - pnpm-lock.yaml
-        paths:
-            - .pnpm-store
 
 lint:
     <<: *node_template
@@ -83,7 +76,7 @@ deploy:
             $DOCKER_COMPOSE_CMD down &&
             $DOCKER_COMPOSE_CMD up -d"
     rules:
-        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "development"'
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "development"'
 
 include:
     - template: Jobs/SAST.gitlab-ci.yml
