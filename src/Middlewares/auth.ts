@@ -1,13 +1,13 @@
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
-export const SECRET_KEY: Secret = process.env.TOKEN_SECRET!;
+export const SECRET_KEY: Secret = process.env.TOKEN_SECRET ?? "";
 
 export interface CustomRequest extends Request {
     token: string | JwtPayload;
 }
 
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
+export const auth = (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.header("Authorization")?.replace("Bearer ", "");
 

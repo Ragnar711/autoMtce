@@ -16,6 +16,6 @@ describe("DELETE /ensembles/:id", () => {
             .expect(200);
 
         const deletedEnsemble = await EnsembleModel.findById(ensemble._id);
-        expect(deletedEnsemble!.deleted).toBe(true);
+        expect(deletedEnsemble?.deleted).toBe(true);
     });
 });

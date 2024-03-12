@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 import {
     OperationModel,
     ElementModel,
@@ -15,9 +15,7 @@ async function seedDatabase() {
 
         mongoose.set("strictQuery", true);
 
-        const MONGO_URI = process.env.MONGO_URI;
-
-        mongoose.connect(MONGO_URI!);
+        mongoose.connect(process.env.MONGO_URI ?? "");
 
         const operation1_1_1_1 = await OperationModel.create({
             name: "Inspection sonore de l'accouplement (présence de bruit anormal et vibration)",

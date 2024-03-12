@@ -72,7 +72,7 @@ beforeAll(async () => {
         params: [params1._id, params2._id],
     });
 
-    await mongoose.connect(process.env.MONGO_URI!);
+    await mongoose.connect(process.env.MONGO_URI ?? "");
 });
 
 afterAll(async () => {
